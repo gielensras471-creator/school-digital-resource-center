@@ -1,0 +1,17 @@
+node_modules/
+dist/
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+*.log
+coverage/
+*.tsbuildinfo
+# 请勿提交真实视频文件和云端密钥
+*.mp4
+*.mov
+*.avi
+*.zip
