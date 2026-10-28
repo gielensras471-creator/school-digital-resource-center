@@ -1,8 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { getWeek, isGrade } from '../modules/calligraphy/data/catalog'
 
+// GitHub Pages doesn't offer history-mode rewrites for deep links.
+// Use hash routes only in the Pages preview. Tencent Cloud/local stay in history mode.
+const history = import.meta.env.BASE_URL === '/school-digital-resource-center/'
+  ? createWebHashHistory(import.meta.env.BASE_URL)
+  : createWebHistory(import.meta.env.BASE_URL)
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history,
   routes: [
     { path: '/', name: 'home', component: () => import('../pages/HomeView.vue'), meta: { title: '资源总站' } },
     { path: '/calligraphy', name: 'calligraphy', component: () => import('../modules/calligraphy/pages/CalligraphyHomeView.vue'), meta: { title: '书法教学' } },
@@ -14,7 +20,6 @@ const router = createRouter({
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
-    // 切换同一周内的课程不强制滚动到顶部
     if ((to.name === 'lesson' || to.name === 'week') && (from.name === 'lesson' || from.name === 'week') && to.params.grade === from.params.grade && to.params.week === from.params.week) return undefined
     return { top: 0 }
   },
