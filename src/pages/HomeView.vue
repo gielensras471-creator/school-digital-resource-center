@@ -3,28 +3,43 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <div class="container page-stack">
-    <section class="home-hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">WELCOME TO LEARN · 校园学习资源</p>
-        <h1 id="hero-title">让每一次练习，<br />都有清晰的示范。</h1>
-        <p class="hero-description">汇集学校教学所需的数字学习资源。从书法笔画到每一周课程，让学习有迹可循。</p>
-        <RouterLink to="/calligraphy" class="button button-primary">进入书法教学 <span aria-hidden="true">↗</span></RouterLink>
+  <div class="container page">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <p class="hero-kicker">DIGITAL LEARNING RESOURCES</p>
+        <h1 id="hero-title">校园数字教学资源中心</h1>
+        <p>汇集清晰、易用的教学资源，让每一次自主学习都有迹可循。</p>
+        <RouterLink to="/calligraphy" class="btn">进入书法教学 <span aria-hidden="true">→</span></RouterLink>
       </div>
-      <div class="hero-illustration" aria-hidden="true">
-        <div class="paper-back"></div><div class="paper-front"><span>硬笔书法</span><strong>永</strong><small>一笔一画 · 规范书写</small></div>
-        <div class="floating-note">✦ 书写示范</div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="orb one"></span><span class="orb two"></span>
+        <div class="art-tiles">
+          <div class="small-art"><i></i><i></i><div class="art-play">▷</div></div>
+          <div class="book-graphic"><span class="art-title">书法教学</span><div class="art-main">永</div><div class="art-line"></div><div class="art-line sm"></div></div>
+        </div>
       </div>
     </section>
-    <section aria-labelledby="resource-title" class="resource-section">
-      <div class="section-heading"><div><p class="eyebrow">OUR RESOURCES</p><h2 id="resource-title">教学资源</h2></div><span class="section-side-note">从基础开始，循序渐进</span></div>
-      <div class="resource-grid">
-        <RouterLink to="/calligraphy" class="resource-card resource-card-active">
-          <span class="resource-icon" aria-hidden="true">书</span><div class="resource-copy"><h3>书法教学</h3><p>一年级至五年级下册 · 65 个教学周</p><span class="text-action">查看课程 <span aria-hidden="true">→</span></span></div>
-          <span class="card-arrow" aria-hidden="true">↗</span>
+
+    <section class="module-section" aria-labelledby="modules-title">
+      <div class="section-heading"><h2 id="modules-title">教学资源</h2><span>首期开放 1 个模块</span></div>
+      <div class="modules">
+        <RouterLink class="module module-active" to="/calligraphy">
+          <div>
+            <div class="module-top">
+              <span class="module-icon" aria-hidden="true">✎</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </div>
+            <h3>书法教学</h3><p>一年级至五年级下册 · 65 个教学周</p>
+          </div>
+          <div class="module-footer"><span>课程目录已开放 · 视频待接入</span><span>探索课程 →</span></div>
         </RouterLink>
-        <div class="resource-card resource-card-planned">
-          <span class="planned-icon" aria-hidden="true">✧</span><div class="resource-copy"><h3>更多教学资源</h3><p>朗读音频、科学实验等模块按需逐步扩展。</p><span class="planned-label">后续规划 · 暂未开放</span></div>
+        <div class="module locked" aria-label="朗读与听力，规划中，暂未开放">
+          <div><div class="module-top"><span class="module-icon disabled" aria-hidden="true">♫</span></div><h3>朗读与听力</h3><p>后续资源方向，暂未开放</p></div>
+          <div class="module-footer"><span>规划中</span></div>
+        </div>
+        <div class="module locked" aria-label="科学实验，规划中，暂未开放">
+          <div><div class="module-top"><span class="module-icon disabled" aria-hidden="true">⚗</span></div><h3>科学实验</h3><p>后续资源方向，暂未开放</p></div>
+          <div class="module-footer"><span>规划中</span></div>
         </div>
       </div>
     </section>

@@ -10,7 +10,7 @@ const grade = computed(() => Number(route.params.grade) as Grade)
 const week = computed(() => Number(route.params.week))
 const details = computed(() => getWeek(grade.value, week.value)!)
 const lessons = computed(() => getSampleLessons(grade.value, week.value))
-const gradeName = computed(() => `${['一','二','三','四','五'][grade.value-1]}年级下册`)
+const gradeName = computed(() => `${['一','二','三','四','五'][grade.value - 1]}年级下册`)
 const rawLessonKey = computed(() => typeof route.params.lessonKey === 'string' ? route.params.lessonKey : null)
 const selectedLesson = computed(() => lessons.value.find((item) => item.lessonKey === rawLessonKey.value) || (rawLessonKey.value === null ? lessons.value[0] : undefined))
 const lessonNotIndexed = computed(() => rawLessonKey.value !== null && !selectedLesson.value)
@@ -18,30 +18,43 @@ const weekPath = computed(() => `/calligraphy/grade/${grade.value}/week/${week.v
 </script>
 
 <template>
-  <div class="container page-stack">
+  <div class="container page">
     <BreadcrumbNav :items="[{ label: '资源总站', to: '/' }, { label: '书法教学', to: '/calligraphy' }, { label: gradeName, to: `/calligraphy/grade/${grade}` }, { label: `第 ${week} 周` }]" />
-    <div class="page-heading"><div><p class="eyebrow">CALLIGRAPHY · WEEK {{ String(week).padStart(2, '0') }}</p><h1>{{ details.topic || `第 ${week} 周` }}</h1><p class="page-intro">{{ gradeName }} · 第 {{ week }} 周 · {{ details.expectedLessonCount }} 个视频（目录统计）</p></div><span class="heading-pill">V0.2 · 播放区占位</span></div>
-    <div class="lesson-layout">
-      <section class="panel video-panel" aria-labelledby="current-lesson">
-        <div class="panel-heading"><h2 id="current-lesson">{{ selectedLesson ? selectedLesson.title : (lessonNotIndexed ? '课程尚未收录' : '本周课程预览') }}</h2><span class="small-muted">视频待接入</span></div>
-        <div class="video-placeholder" role="img" aria-label="视频播放器尚未接入，V0.3 阶段加入真实视频">
-          <div class="placeholder-glyph" aria-hidden="true">▶</div>
-          <strong>视频播放区</strong><span>V0.3 将接入真实 MP4 与播放器</span>
-          <small>此处仅展示结构，不是可播放的视频</small>
+    <section class="lesson-header" aria-labelledby="week-title">
+      <h1 id="week-title" class="page-title">第 {{ week }} 周 · {{ details.topic || '教学主题待确认' }}</h1>
+      <p class="page-sub">{{ gradeName }} · 第 {{ week }} 周 · {{ details.expectedLessonCount }} 个视频目录</p>
+    </section>
+    <div class="player-grid">
+      <section class="player-panel" aria-labelledby="current-lesson">
+        <div class="video-box" role="img" aria-label="视频尚未接入，当前为视觉占位，不可播放">
+          <span class="video-symbol" aria-hidden="true">▶</span>
+          <strong>视频尚未接入</strong>
+          <small>V0.3 将接入真实视频播放器</small>
+          <span class="video-stub" aria-hidden="true"></span>
         </div>
-        <div class="video-panel-note"><span class="info-dot" aria-hidden="true"></span><span>当前为界面骨架。无需登录，视频上线后在这里播放、暂停和切换课程。</span></div>
+        <div class="chosen">
+          <h2 id="current-lesson">{{ selectedLesson ? selectedLesson.title : (lessonNotIndexed ? '课程尚未收录' : '本周课程预览') }}</h2>
+          <p>{{ selectedLesson ? `${gradeName} · 第 ${week} 周 · 第 ${selectedLesson.displayOrder} 节` : `${gradeName} · 第 ${week} 周` }}</p>
+          <div class="stub-note">当前仅展示课程页面结构。后续阶段接入视频后，可在此播放、暂停、重播及切换课程。</div>
+        </div>
       </section>
-      <aside class="panel lesson-panel" aria-labelledby="lesson-list-title">
-        <div class="panel-heading"><h2 id="lesson-list-title">本周课程</h2><span class="small-muted">预计 {{ details.expectedLessonCount }} 节</span></div>
-        <p class="panel-subtitle">{{ lessons.length ? '以下为来源文档已记录的示例课程，暂未连接视频。' : '该周课程的逐条索引将在 V0.4 根据原视频目录生成。' }}</p>
-        <div v-if="lessons.length" class="lesson-grid">
-          <RouterLink v-for="lesson in lessons" :key="lesson.id" :to="`${weekPath}/lesson/${lesson.lessonKey}`" class="lesson-chip" :class="{ 'lesson-chip-active': selectedLesson?.id === lesson.id }" :aria-current="selectedLesson?.id === lesson.id ? 'page' : undefined"><span>{{ String(lesson.displayOrder).padStart(2, '0') }}</span>{{ lesson.title }}</RouterLink>
+      <aside class="playlist" aria-labelledby="lesson-list-title">
+        <div class="playlist-top"><h2 id="lesson-list-title">本周课程</h2><span>预计 {{ details.expectedLessonCount }} 节</span></div>
+        <div v-if="lessons.length" class="playlist-inner">
+          <RouterLink v-for="lesson in lessons" :key="lesson.id" class="lesson-item" :class="{ active: selectedLesson?.id === lesson.id }" :to="`${weekPath}/lesson/${lesson.lessonKey}`" :aria-current="selectedLesson?.id === lesson.id ? 'page' : undefined">
+            <span class="lesson-thumb" aria-hidden="true">{{ lesson.title.slice(0, 1) }}</span>
+            <span class="lesson-copy"><strong>{{ lesson.displayOrder }} · {{ lesson.title }}</strong><small>书写示范 · 视频未接入</small></span>
+            <span class="lesson-indicator" aria-hidden="true">›</span>
+          </RouterLink>
         </div>
-        <div v-else class="empty-lessons"><span aria-hidden="true">▤</span><strong>课程明细等待导入</strong><p>目前已确认年级、周次和数量，不伪造单个课程或视频地址。</p></div>
-        <p v-if="lessonNotIndexed" class="inline-alert" role="status">当前单课链接尚未建立可核实的课程映射，请从周次入口浏览。正式二维码将在课程索引核验后生成。</p>
-        <p class="lesson-tip">周次页面地址将长期保持稳定；单课二维码需要等待数据校验与校方确认。</p>
+        <div v-else class="lesson-empty"><strong>课程明细等待导入</strong>目前仅有本周主题和数量；逐条课程将在 V0.4 根据原始目录生成。</div>
+        <p v-if="lessonNotIndexed" class="lesson-alert" role="status">当前单课链接尚未建立可核实的课程映射，请从本周课程入口浏览。</p>
+        <p class="lesson-footnote">课程导航为预览状态，尚未接入 MP4；原始目录的异常待校方核实。</p>
       </aside>
     </div>
-    <div class="page-actions"><RouterLink class="button button-secondary" :to="`/calligraphy/grade/${grade}`">← 返回教学周次</RouterLink><RouterLink class="button button-plain" to="/calligraphy">返回年级选择</RouterLink></div>
+    <div class="back-actions">
+      <RouterLink class="btn btn-outline" :to="`/calligraphy/grade/${grade}`">← 返回教学周次</RouterLink>
+      <RouterLink class="btn btn-outline" to="/calligraphy">返回年级选择</RouterLink>
+    </div>
   </div>
 </template>
