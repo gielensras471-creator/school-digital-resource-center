@@ -15,3 +15,6 @@ coverage/
 *.mov
 *.avi
 *.zip
+
+# V0.3：本地示范视频及临时素材不得推送到 GitHub
+public/videos/

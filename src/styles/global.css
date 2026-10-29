@@ -1350,3 +1350,22 @@ body {
     white-space: normal;
   }
 }
+
+
+
+/* V0.3：本地视频播放器。保留 V0.2.1 的整体视觉结构。 */
+.video-player { width: 100%; min-width: 0; }
+.video-stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #121a2b; border-radius: 8px; overflow: hidden; }
+.video-element { display: block; width: 100%; height: 100%; object-fit: contain; background: #111827; }
+.video-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 20px; color: #fff; background: radial-gradient(circle at 54% 50%,#2c3950 0,#1e293b 62%,#151e2c 100%); text-align: center; }
+.video-overlay strong { font-size: 15px; font-weight: 650; }
+.video-overlay small { color: #d0ddf0; line-height: 1.7; font-size: 12px; max-width: 340px; }
+.video-overlay-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid #ffffff5e; background: #ffffff17; }
+.video-overlay-passive { background: rgba(15,23,42,.55); pointer-events: none; }
+.video-overlay-error { background: rgba(15,23,42,.94); pointer-events: none; }
+.video-tools { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.video-state-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.video-replay { background: #f0f5ff; border: 1px solid #d8e5fa; color: var(--primary); border-radius: 7px; padding: 9px 14px; font-size: 12px; font-weight: 700; cursor: pointer; min-height: 40px; }
+.video-replay:hover:not(:disabled) { background: #e4efff; }
+.video-replay:disabled { color: #9baabe; cursor: not-allowed; opacity: .75; }
+@media (max-width:600px) { .video-stage { border-radius: 7px; } .video-overlay { padding: 15px; gap: 8px; } .video-overlay strong { font-size: 14px; } .video-overlay small { font-size: 11px; } .video-tools { gap: 8px; } }

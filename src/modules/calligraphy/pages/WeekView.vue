@@ -2,7 +2,9 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import BreadcrumbNav from '../../../components/BreadcrumbNav.vue'
+import VideoPlayer from '../components/VideoPlayer.vue'
 import { getSampleLessons, getWeek } from '../data/catalog'
+import { getMediaHint, getSampleVideoUrl } from '../data/video'
 import type { Grade } from '../types/catalog'
 
 const route = useRoute()
@@ -15,6 +17,8 @@ const rawLessonKey = computed(() => typeof route.params.lessonKey === 'string' ?
 const selectedLesson = computed(() => lessons.value.find((item) => item.lessonKey === rawLessonKey.value) || (rawLessonKey.value === null ? lessons.value[0] : undefined))
 const lessonNotIndexed = computed(() => rawLessonKey.value !== null && !selectedLesson.value)
 const weekPath = computed(() => `/calligraphy/grade/${grade.value}/week/${week.value}`)
+const videoSrc = computed(() => getSampleVideoUrl(grade.value, week.value, selectedLesson.value?.originalFileName))
+const videoHint = computed(() => getMediaHint(grade.value, week.value))
 </script>
 
 <template>
@@ -26,16 +30,11 @@ const weekPath = computed(() => `/calligraphy/grade/${grade.value}/week/${week.v
     </section>
     <div class="player-grid">
       <section class="player-panel" aria-labelledby="current-lesson">
-        <div class="video-box" role="img" aria-label="视频尚未接入，当前为视觉占位，不可播放">
-          <span class="video-symbol" aria-hidden="true">▶</span>
-          <strong>视频尚未接入</strong>
-          <small>V0.3 将接入真实视频播放器</small>
-          <span class="video-stub" aria-hidden="true"></span>
-        </div>
+        <VideoPlayer :src="videoSrc" :title="selectedLesson?.title || '书写示范'" :empty-message="videoHint" />
         <div class="chosen">
           <h2 id="current-lesson">{{ selectedLesson ? selectedLesson.title : (lessonNotIndexed ? '课程尚未收录' : '本周课程预览') }}</h2>
           <p>{{ selectedLesson ? `${gradeName} · 第 ${week} 周 · 第 ${selectedLesson.displayOrder} 节` : `${gradeName} · 第 ${week} 周` }}</p>
-          <div class="stub-note">当前仅展示课程页面结构。后续阶段接入视频后，可在此播放、暂停、重播及切换课程。</div>
+          <div class="stub-note">{{ videoHint }}</div>
         </div>
       </section>
       <aside class="playlist" aria-labelledby="lesson-list-title">
@@ -43,13 +42,13 @@ const weekPath = computed(() => `/calligraphy/grade/${grade.value}/week/${week.v
         <div v-if="lessons.length" class="playlist-inner">
           <RouterLink v-for="lesson in lessons" :key="lesson.id" class="lesson-item" :class="{ active: selectedLesson?.id === lesson.id }" :to="`${weekPath}/lesson/${lesson.lessonKey}`" :aria-current="selectedLesson?.id === lesson.id ? 'page' : undefined">
             <span class="lesson-thumb" aria-hidden="true">{{ lesson.title.slice(0, 1) }}</span>
-            <span class="lesson-copy"><strong>{{ lesson.displayOrder }} · {{ lesson.title }}</strong><small>书写示范 · 视频未接入</small></span>
+            <span class="lesson-copy"><strong>{{ lesson.displayOrder }} · {{ lesson.title }}</strong><small>本地书写示范视频</small></span>
             <span class="lesson-indicator" aria-hidden="true">›</span>
           </RouterLink>
         </div>
         <div v-else class="lesson-empty"><strong>课程明细等待导入</strong>目前仅有本周主题和数量；逐条课程将在 V0.4 根据原始目录生成。</div>
         <p v-if="lessonNotIndexed" class="lesson-alert" role="status">当前单课链接尚未建立可核实的课程映射，请从本周课程入口浏览。</p>
-        <p class="lesson-footnote">课程导航为预览状态，尚未接入 MP4；原始目录的异常待校方核实。</p>
+        <p class="lesson-footnote">V0.3 仅接入一年级下册第 2 周的六个视频样本，其余课程在 V0.4 批量导入。</p>
       </aside>
     </div>
     <div class="back-actions">
